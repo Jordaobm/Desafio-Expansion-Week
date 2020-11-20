@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import {
     Header,
     Container,
@@ -14,14 +14,78 @@ import {
     IconAlert,
     AnimatedLoading,
     Footer,
+    Form,
+    Repositories,
+    FindMusic,
+    Error,
+    MusicText,
 } from './styles';
 import { IoMdStopwatch } from 'react-icons/io'
 import { AiOutlineArrowDown, AiOutlineReload } from 'react-icons/ai';
-import { FiAlertCircle, FiCheck } from 'react-icons/fi';
-import {BiLike} from 'react-icons/bi';
+import { FiAlertCircle, FiCheck, FiChevronRight } from 'react-icons/fi';
+import { BiLike } from 'react-icons/bi';
+import api from '../../services/api';
+//import credential from '../../config/credentials';
 
+interface Repository {
+    type: string;
+    art: {
+        id: string;
+        name: string;
+        url: string;
+    }
+    mus: [{
+        name: string;
+        url:string
+    }]
+}
 
 const Home: React.FC = () => {
+    const [newRepo, setNewRepo] = useState('');
+    const [newMusic, setNewMusic] = useState('');
+    const [inputError, setInputError] = useState('');
+    const [repositories, setRepositories] = useState<Repository[]>(() => {
+        const storagedRepositories = localStorage.getItem('@ListaDeMusicas:repositories');
+
+        if (storagedRepositories) {
+            return JSON.parse(storagedRepositories);
+        } else {
+            return [];
+        }
+    });
+
+    useEffect(() => {
+        localStorage.setItem('@ListaDeMusicas:repositories', JSON.stringify(repositories));
+
+
+    }, [repositories])
+
+
+    async function handleAddRepository(event: FormEvent<HTMLFormElement>): Promise<void> {
+        event.preventDefault();
+
+        if (!newRepo || !newMusic) {
+            setInputError('Digite o nome do autor e da música!')
+            return;
+        }
+
+
+        const response = await api.get<Repository>(`/search.php?art=${newRepo}&mus=${newMusic}&apikey={key}`)
+        const repository = response.data;
+
+        console.log(repository)
+
+        if (repository.type == 'notfound' || repository.type == 'song_notfound') {
+            setInputError('Nome do autor ou da música incorreto!')
+        } else {
+            setRepositories([...repositories, repository]);
+            setNewRepo('')
+            setNewMusic('')
+            setInputError('')
+
+        }
+    }
+
 
 
     return (<>
@@ -46,10 +110,6 @@ const Home: React.FC = () => {
 
         </ArrowDown>
 
-
-
-
-
         <ContainerText>
 
             <Text1>
@@ -57,17 +117,15 @@ const Home: React.FC = () => {
                     <strong>Faala dev beleza? </strong>
                 </h1>
                 <p>
-                    
+
                     Se você chegou até aqui é porque você tem paciência e perseverança, pois fácil não é. Mas o que é a paciência, ser paciente e perseverante? Dev, rola essa página para baixo que eu te conto!!!!
 
                </p>
             </Text1>
 
-
             <AnimatedLoading>
                 <AiOutlineReload size={60} />
             </AnimatedLoading>
-
 
             <Text1>
                 <h1>
@@ -99,12 +157,43 @@ const Home: React.FC = () => {
                 </CardTextChecked>
             </Text2>
 
+           <MusicText>
+               <h1>Música sempre ajuda</h1>
+               <p>Com uma pequena parcela do que pude aprender até então no bootcamp, e um pouco sem tempo hábil devido à correria da semana, resolvi brincar um pouco com uma API interessante da internet! Que dev ai lembra do Vagalume?! Aplicativo para músicas? Digitando o nome do autor e o nome da música você consegue criar aqui uma pequena playlist para quando for codar haha. Adoro colocar músicas enquanto estilizo minhas páginas xD. OBS: O único problema é que dependendo da música, o vagalume tem a letra um pouco diferente e a gravação um pouco antiga, mas isso é detalhe né dev?! Bora se animar que o nivel 4 vem por ai!!!</p>
+           </MusicText>
+
+
+            <FindMusic>
+                <Form onSubmit={handleAddRepository}>
+                    <input value={newRepo} onChange={(e) => setNewRepo(e.target.value)} placeholder="Digite o nome do Autor"></input>
+                    <input value={newMusic} onChange={(e) => setNewMusic(e.target.value)} placeholder="Digite o nome da Música"></input>
+                    <button>Pesquisar</button>
+                </Form>
+
+                {inputError && <Error>{inputError}</Error>}
+
+                <Repositories>
+                    {repositories.map(repository => (
+                        <a key={repository.art.id} target='_blank' href={repository.mus[0].url}>
+                            <img src="https://cdn-images-1.medium.com/max/1200/1*BWkPidfUKtndVrJZxm4mxQ.png" alt="Vagalume" />
+                            <div>
+                                <strong>{repository.mus[0].name}</strong>
+                                <p>{repository.art.name}</p>
+                                <p>{repository.mus[0].url}</p>
+                            </div>
+
+                            <FiChevronRight size={20} />
+                        </a>
+                    ))}
+                </Repositories>
+
+            </FindMusic>
 
         </ContainerText>
         <Footer>
-            <Container style={{ height:'350px'}}>
+            <Container style={{ height: '350px' }}>
 
-                
+
                 <ContentImage>
                     <BiLike size={220} color="#FFF" />
                 </ContentImage>
