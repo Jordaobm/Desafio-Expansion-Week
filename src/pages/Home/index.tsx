@@ -175,7 +175,6 @@ const Home: React.FC = () => {
                 <Repositories>
                     {repositories.map(repository => (
                         <a key={repository.art.id} target='_blank' href={repository.mus[0].url}>
-                            <img src="https://cdn-images-1.medium.com/max/1200/1*BWkPidfUKtndVrJZxm4mxQ.png" alt="Vagalume" />
                             <div>
                                 <strong>{repository.mus[0].name}</strong>
                                 <p>{repository.art.name}</p>

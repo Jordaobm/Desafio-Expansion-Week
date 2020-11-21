@@ -305,15 +305,29 @@ export const Footer = styled.div`
 
 export const FindMusic = styled.div`
 
-width:700px;
-margin:80px auto;
+    margin:80px auto;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
 
 `;
 
 
 export const Form = styled.form`
+
   max-width: 700px;
-  display: flex;
+
+  
+  @media(max-width: 850px){
+      display:flex;
+      flex-direction:column;
+      width:100%;
+      
+      align-items:center;
+  }
+  
+    
   
   input {
     font-size:16px;
@@ -325,6 +339,15 @@ export const Form = styled.form`
     color: #3a3a3a;
     border: 2px solid #fff;
     border-right: 0;
+    
+    @media(max-width: 850px){
+      //background-color:red;
+      width: 300px;
+      padding: 24px 24px;
+      margin:14px 0px;
+  }
+    
+    
   }
   button {
     width: 210px;
@@ -338,20 +361,31 @@ export const Form = styled.form`
     &:hover {
       background: ${shade(0.2, '#65BF73')};
     }
+    @media(max-width: 850px){
+     //background-color:red;
+        width: 300px;
+        border-radius: 5px 5px 5px 5px;
+        text-align:left;
+        padding: 24px 27px;
+        margin:14px 0px;
+      
+  }
+
+
   }
 `;
 
 export const Repositories = styled.div`
   margin-top: 80px;
-  max-width: 700px;
+  display:flex;
+  flex-direction:column;
   a {
     background: #fff;
     border-radius: 5px;
     width: 100%;
     padding: 24px;
-    display: block;
-    text-decoration: none;
     display: flex;
+    text-decoration: none;
     align-items: center;
     transition: transform 0.2s;
     & + a {
@@ -363,7 +397,7 @@ export const Repositories = styled.div`
       border-radius: 50%;
     }
     div {
-      margin: 0 16px;
+      
       flex: 1;
       strong {
         font-size: 20px;
@@ -373,12 +407,31 @@ export const Repositories = styled.div`
         font-size: 18px;
         color: #a8a8b3;
         margin-top: 4px;
+        @media(max-width: 850px){
+            font-size:16px;
+        }
+
       }
     }
     svg {
       margin-left: auto;
       color: #cbcbd6;
     }
+    @media(max-width: 850px){
+     //background-color:red;        
+        padding:0 2%;
+        margin:0;
+        img{
+            display:none;
+        }
+        svg{
+            display:none;
+        }
+        
+        
+      
+  }
+
   }
 `;
 
@@ -394,8 +447,9 @@ export const Error = styled.span`
 `;
 
 export const MusicText = styled.div`
-
+    width:100%;
     margin-top:80px;
+    padding:0 2%;
 
     h1{
         text-align:right;
